@@ -1,0 +1,27 @@
+# Use a lightweight Python image
+FROM python:3.9-slim
+
+# Set the working directory
+WORKDIR /app
+
+# Install system dependencies required for building Python packages
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libffi-dev \
+    libssl-dev \
+    python3-dev \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements.txt first for caching
+COPY requirements.txt .
+
+# Upgrade pip and install Python dependencies
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
+
+# Copy the rest of your application files
+COPY . .
+
+# Command to run your bot
+CMD ["python", "bot.py"]
